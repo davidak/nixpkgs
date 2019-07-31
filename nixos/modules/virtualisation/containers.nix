@@ -253,6 +253,10 @@ let
     RestartForceExitStatus = "133";
     SuccessExitStatus = "133";
 
+    # Some containers take long to start
+    # especially when you automatically start many at once
+    TimeoutStartSec = cfg.timeoutStartSec;
+
     Restart = "on-failure";
 
     Slice = "machine.slice";
@@ -419,6 +423,7 @@ let
     {
       extraVeths = {};
       additionalCapabilities = [];
+      timeoutStartSec = null;
       allowedDevices = [];
       hostAddress = null;
       hostAddress6 = null;
@@ -566,6 +571,16 @@ in
                 Whether the container is automatically started at boot-time.
               '';
             };
+
+		    timeoutStartSec = mkOption {
+		      type = types.str;
+		      default = "1min";
+		      description = ''
+		        Time for the container to start. In case of a timeout,
+		        the container processes get killed. See systemd.time(7)
+		        for more information about the format.
+		       '';
+		    };
 
             bindMounts = mkOption {
               type = with types; loaOf (submodule bindMountOpts);
