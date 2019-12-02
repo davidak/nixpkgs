@@ -123,16 +123,25 @@ let
   } source;
 
   source = rec {
-    version = "1.3.0";
+    version = "1.4.0";
 
     # Needs submodules
     src = fetchFromGitHub {
       owner = "mumble-voip";
       repo = "mumble";
-      rev = version;
-      sha256 = "0g5ri84gg0x3crhpxlzawf9s9l4hdna6aqw6qbdpx1hjlf5k6g8k";
+      rev = "a4da618d9a990d866272ab023b2b30551f950e55";
+      sha256 = "1blvbcg4sg0jq9lmz89071030jpvc4l7fryasd6cj11yv4wc8n70";
       fetchSubmodules = true;
     };
+
+    patches = [
+      # test PR https://github.com/mumble-voip/mumble/pull/3571
+      (fetchpatch {
+        url = "https://github.com/mumble-voip/mumble/pull/3571.patch";
+        sha256 = "10ln3q7mzcmbcq0lyr66y6gna82a3xywxg2q21y13g06bagks8k2";
+      })
+    ];
+    
   };
 in {
   mumble  = client source;
