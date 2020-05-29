@@ -1,32 +1,30 @@
-{ stdenv, fetchFromGitHub, python, llvmPackages }:
+{ stdenv, fetchFromGitHub, cmake, ninja, llvm_10, clang_10, python3 }:
 
 let
-  llvm = llvmPackages.llvm;
-  clang = llvmPackages.clang;
-  clang-unwrapped = llvmPackages.clang-unwrapped;
+  llvm = llvm_10;
+  clang = clang_10;
 in
 
-stdenv.mkDerivation {
-  name = "libclc-2019-06-09";
+stdenv.mkDerivation rec {
+  pname = "libclc";
+  version = "10.0.0";
 
   src = fetchFromGitHub {
-    owner = "llvm-mirror";
-    repo = "libclc";
-    rev = "9f6204ec04a8cadb6bef57caa71e3161c4f398f2";
-    sha256 = "03l9frx3iw3qdsb9rrscgzdwm6872gv6mkssvn027ndf9y321xk7";
+    owner = "llvm";
+    repo = "llvm-project";
+    rev = "llvmorg-${version}";
+    sha256 = "1mhr0yhbz5w5mv4gk3jpcz12d3k2mvm6qi276fx4bw21q3vs2z4q";
   };
 
-  nativeBuildInputs = [ python ];
-  buildInputs = [ llvm clang clang-unwrapped ];
+  nativeBuildInputs = [ cmake ninja python3 ];
+  buildInputs = [ llvm clang ];
 
-  postPatch = ''
-    sed -i 's,llvm_clang =.*,llvm_clang = "${clang-unwrapped}/bin/clang",' configure.py
-    sed -i 's,cxx_compiler =.*,cxx_compiler = "${clang}/bin/clang++",' configure.py
-  '';
+  postUnpack = "sourceRoot=\${sourceRoot}/libclc";
 
-  configurePhase = ''
-    ${python.interpreter} ./configure.py --prefix=$out
-  '';
+  cmakeFlags = [
+    "-DLLVM_CLANG=${clang}/bin/clang"
+    "-DLLVM_CONFIG=${llvm}/bin/llvm-config"
+  ];
 
   enableParallelBuilding = true;
 
