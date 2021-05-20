@@ -14,6 +14,8 @@ stdenv.mkDerivation rec {
     sha256 = "0ssi1wpaf7plaswqqjwigppsg5fyh99vdlb9kzl7c9lng89ndq1i";
   };
 
+  __contentAddressed = true;
+
   doCheck = true;
 
   passthru.tests.version =
