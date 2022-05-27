@@ -1,30 +1,57 @@
 # Installing NixOS {#sec-installation}
 
-## Booting the system {#sec-installation-booting}
+## Booting from the Install drive {#sec-installation-booting}
+
+To begin the installation, you have to boot your computer from the install drive.
+
+1.   Assuming your computer is still running, plug in the install drive
+and restart your computer.
+
+2.   Most computers will allow to select a drive to temporary boot from by
+pressing a special key, usually F12, but sometimes ESC or another function key.
+Refer to the screen or your computer's documentation to be sure.
+
+3.   Press F12 (or the appropriate key) and select the install drive, usually
+"USB-HDD" or something containing the word "USB", but the wording may vary.
+If your computer support BIOS and UEFI boot, choose the UEFI option.
+If you choose the incorrect drive, your computer will likely continue to boot
+as normal. Just restart your computer and pick a different drive in that menu.
+
+4.   Shortly after selecting the appropriate boot drive, you should be presented
+with a menu with different Installer options. Leave the default and wait
+(or press Enter to speed up).
+
+5.   The graphical images will start the desktop environment and the graphical
+installer, which can take some time. The minimal images will just have
+a command line.
+
+## Graphical Installation {#sec-installation-graphical}
+
+The graphical installer is recommended for most desktop users and will guide
+you through the install process.
+
+
+## Manual Installation {#sec-installation-manual}
 
 NixOS can be installed on BIOS or UEFI systems. The procedure for a UEFI
-installation is by and large the same as a BIOS installation. The
-differences are mentioned in the steps that follow.
+installation is broadly the same as for a BIOS installation. The differences
+are mentioned in the following steps.
 
-The installation media can be burned to a CD, or now more commonly,
-"burned" to a USB drive (see [](#sec-booting-from-usb)).
+The NixOS manual is available by running `nixos-help` in the command line
+or from the application menu in the desktop environment.
 
-The installation media contains a basic NixOS installation. When it's
-finished booting, it should have detected most of your hardware.
-
-The NixOS manual is available by running `nixos-help`.
+To have access to the command line on the graphical images, open
+Terminal (GNOME) or Konsole (Plasma) from the application menu.
 
 You are logged-in automatically as `nixos`. The `nixos` user account has
 an empty password so you can use `sudo` without a password:
+
 ```ShellSession
 $ sudo -i
 ```
 
-If you downloaded the graphical ISO image, you can run `systemctl
-start display-manager` to start the desktop environment. If you want
-to continue on the terminal, you can use `loadkeys` to switch to your
-preferred keyboard layout. (We even provide neo2 via `loadkeys de
-neo`!)
+You can use `loadkeys` to switch to your preferred keyboard layout.
+(We even provide neo2 via `loadkeys de neo`!)
 
 If the text is too small to be legible, try `setfont ter-v32n` to
 increase the font size.
@@ -33,7 +60,7 @@ To install over a serial port connect with `115200n8` (e.g.
 `picocom -b 115200 /dev/ttyUSB0`). When the bootloader lists boot
 entries, select the serial console boot entry.
 
-### Networking in the installer {#sec-installation-booting-networking}
+### Networking in the installer {#sec-installation-manual-networking}
 
 The boot process should have brought up networking (check `ip
 a`). Networking is necessary for the installer, since it will
@@ -100,7 +127,7 @@ placed by mounting the image on a different machine). Alternatively you
 must set a password for either `root` or `nixos` with `passwd` to be
 able to login.
 
-## Partitioning and formatting {#sec-installation-partitioning}
+### Partitioning and formatting {#sec-installation-manual-partitioning}
 
 The NixOS installer doesn't do any partitioning or formatting, so you
 need to do that yourself.
@@ -112,7 +139,7 @@ below use `parted`, but also provides `fdisk`, `gdisk`, `cfdisk`, and
 The recommended partition scheme differs depending if the computer uses
 *Legacy Boot* or *UEFI*.
 
-### UEFI (GPT) {#sec-installation-partitioning-UEFI}
+#### UEFI (GPT) {#sec-installation-manual-partitioning-UEFI}
 
 Here\'s an example partition scheme for UEFI, using `/dev/sda` as the
 device.
@@ -158,9 +185,9 @@ update /etc/fstab.
     ```
 
 Once complete, you can follow with
-[](#sec-installation-partitioning-formatting).
+[](#sec-installation-manual-partitioning-formatting).
 
-### Legacy Boot (MBR) {#sec-installation-partitioning-MBR}
+#### Legacy Boot (MBR) {#sec-installation-manual-partitioning-MBR}
 
 Here\'s an example partition scheme for Legacy Boot, using `/dev/sda` as
 the device.
@@ -196,9 +223,9 @@ update /etc/fstab.
     :::
 
 Once complete, you can follow with
-[](#sec-installation-partitioning-formatting).
+[](#sec-installation-manual-partitioning-formatting).
 
-### Formatting {#sec-installation-partitioning-formatting}
+#### Formatting {#sec-installation-manual-partitioning-formatting}
 
 Use the following commands:
 
@@ -233,7 +260,7 @@ Use the following commands:
 
 -   For creating software RAID devices, use `mdadm`.
 
-## Installing {#sec-installation-installing}
+### Installing {#sec-installation-manual-installing}
 
 1.  Mount the target file system on which NixOS should be installed on
     `/mnt`, e.g.
@@ -394,7 +421,7 @@ Use the following commands:
     You may also want to install some software. This will be covered in
     [](#sec-package-management).
 
-## Installation summary {#sec-installation-summary}
+### Installation summary {#sec-installation-manual-summary}
 
 To summarise, [Example: Commands for Installing NixOS on `/dev/sda`](#ex-install-sequence)
 shows a typical sequence of commands for installing NixOS on an empty hard
