@@ -7,6 +7,7 @@
 
 let
   stdenv = gcc11Stdenv;
+  inherit (stdenv) targetPlatform;
 in
 stdenv.mkDerivation rec {
   inherit (import ./common.nix { inherit lib; })
@@ -27,13 +28,18 @@ stdenv.mkDerivation rec {
     cmake
   ];
 
+  # For 32-bit build
+  cmakeFlags = [ ] ++ lib.optional (targetPlatform.system == "i686-linux")
+    "-DCMAKE_CXX_FLAGS=-m32";
+
   patches = [
     # Fix musl build; vendored from https://github.com/oneapi-src/oneTBB/pull/899
     ./musl.patch
   ];
 
   # Disable failing test on musl
-  # test/conformance/conformance_resumable_tasks.cpp:37:24: error: ‘suspend’ is not a member of ‘tbb::v1::task’; did you mean ‘tbb::detail::r1::suspend’?
+  # test/conformance/conformance_resumable_tasks.cpp:37:24:
+  # error: ‘suspend’ is not a member of ‘tbb::v1::task’; did you mean ‘tbb::detail::r1::suspend’?
   postPatch = lib.optionalString stdenv.hostPlatform.isMusl ''
     sed -i "/conformance_resumable_tasks/d" test/CMakeLists.txt
   '';
